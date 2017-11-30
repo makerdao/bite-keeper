@@ -17,7 +17,7 @@ install:
   - pip install -r requirements-dev.txt
 
 script:
-  - py.test --cov=bite_keeper --cov-report=term --cov-append tests/
+  - PYTHONPATH=$PYTHONPATH:./lib/pymaker py.test --cov=bite_keeper --cov-report=term --cov-append tests/
 
 after_success:
   - codecov

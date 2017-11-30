@@ -22,9 +22,11 @@ import sys
 import pkg_resources
 from web3 import Web3, HTTPProvider
 
-from bite_keeper import Address, Contract, Logger, FixedGasPrice, DefaultGasPrice, chain
+from pymaker import Address, Contract, Logger
+from pymaker.gas import FixedGasPrice, DefaultGasPrice
+from pymaker.lifecycle import Web3Lifecycle
 from pymaker.sai import Tub
-from bite_keeper.lifecycle import Web3Lifecycle
+from pymaker.util import chain
 
 
 class BiteKeeper:

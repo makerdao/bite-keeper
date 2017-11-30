@@ -17,9 +17,9 @@
 
 import pytest
 
-from bite_keeper import Wad
+from bite_keeper.bite_keeper import BiteKeeper
 from pymaker.feed import DSValue
-from bite_keeper.sai_bite import SaiBite
+from pymaker.numeric import Wad
 from tests.conftest import SaiDeployment
 from tests.helper import args, captured_output
 
@@ -29,7 +29,7 @@ class TestBiteKeeper:
         # when
         with captured_output() as (out, err):
             with pytest.raises(SystemExit):
-                SaiBite(args=args(f""), web3=sai.web3)
+                BiteKeeper(args=args(f""), web3=sai.web3)
 
         # then
         assert "error: the following arguments are required: --eth-from" in err.getvalue()
@@ -38,15 +38,15 @@ class TestBiteKeeper:
         # when
         with captured_output() as (out, err):
             with pytest.raises(SystemExit):
-                SaiBite(args=args(f"--eth-from {sai.web3.eth.defaultAccount}"), web3=sai.web3)
+                BiteKeeper(args=args(f"--eth-from {sai.web3.eth.defaultAccount}"), web3=sai.web3)
 
         # then
         assert "error: the following arguments are required: --tub-address" in err.getvalue()
 
     def test_should_bite_unsafe_cups_only(self, sai: SaiDeployment):
         # given
-        keeper = SaiBite(args=args(f"--eth-from {sai.web3.eth.defaultAccount} --tub-address {sai.tub.address}"),
-                         web3=sai.web3)
+        keeper = BiteKeeper(args=args(f"--eth-from {sai.web3.eth.defaultAccount} --tub-address {sai.tub.address}"),
+                            web3=sai.web3)
 
         # and
         sai.tub.join(Wad.from_number(10)).transact()

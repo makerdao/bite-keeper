@@ -7,7 +7,7 @@
 The _DAI Stablecoin System_ incentivizes external agents, called _keepers_,
 to automate certain operations around the Ethereum blockchain.
 
-`sai-bite` is one of the simplest keepers. It constantly monitors a `Tub` contract
+`bite-keeper` is one of the simplest keepers. It constantly monitors a `Tub` contract
 looking for unsafe cups and bites them the moment they become unsafe. Ultimately,
 it should take into account the profit it can make by processing the resulting
 collateral via `bust` and only waste gas on `bite` if it can make it up by

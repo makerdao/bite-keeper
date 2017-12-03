@@ -62,4 +62,4 @@ optional arguments:
 
 ## License
 
-See [COPYING](https://github.com/makerdao/keeper/blob/master/COPYING) file.
+See [COPYING](https://github.com/makerdao/bite-keeper/blob/master/COPYING) file.

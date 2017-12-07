@@ -30,14 +30,7 @@ from pymaker.util import chain
 
 
 class BiteKeeper:
-    """Keeper to bite undercollateralized cups.
-
-    Keeper constantly looks for unsafe cups and bites them the moment they become
-    unsafe. Ultimately, it should take into account the profit it can make by processing
-    the resulting collateral via `bust` and only waste gas on `bite` if it can make it up
-    by subsequent arbitrage. For now, it is a dumb keeper that just bites every cup
-    that can be bitten.
-    """
+    """Keeper to bite undercollateralized cups."""
 
     def __init__(self, args: list, **kwargs):
         parser = argparse.ArgumentParser(prog='bite-keeper')

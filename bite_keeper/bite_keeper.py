@@ -57,10 +57,11 @@ class BiteKeeper:
 
     def lifecycle(self):
         with Web3Lifecycle(self.web3, self.logger) as lifecycle:
+            self.lifecycle = lifecycle
             lifecycle.on_startup(self.startup)
 
-    def startup(self, lifecycle):
-        lifecycle.on_block(self.check_all_cups)
+    def startup(self):
+        self.lifecycle.on_block(self.check_all_cups)
 
     def check_all_cups(self):
         for cup_id in range(self.tub.cupi()):

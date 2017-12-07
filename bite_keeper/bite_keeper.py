@@ -22,9 +22,10 @@ import sys
 import pkg_resources
 from web3 import Web3, HTTPProvider
 
-from pymaker import Address, Contract, Logger
+from pymaker import Address, Contract
 from pymaker.gas import FixedGasPrice, DefaultGasPrice
 from pymaker.lifecycle import Web3Lifecycle
+from pymaker.logger import Logger
 from pymaker.sai import Tub
 from pymaker.util import chain
 

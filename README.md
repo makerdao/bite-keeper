@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/makerdao/bite-keeper.svg?branch=master)](https://travis-ci.org/makerdao/bite-keeper)
 [![codecov](https://codecov.io/gh/makerdao/bite-keeper/branch/master/graph/badge.svg)](https://codecov.io/gh/makerdao/bite-keeper)
-[![Maintainability](https://api.codeclimate.com/v1/badges/b6026b4e21fca450d860/maintainability)](https://codeclimate.com/github/makerdao/bite-keeper/maintainability)
 
 The _DAI Stablecoin System_ incentivizes external agents, called _keepers_,
 to automate certain operations around the Ethereum blockchain.

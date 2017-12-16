@@ -39,7 +39,7 @@ class BiteKeeper:
         parser.add_argument("--rpc-port", help="JSON-RPC port (default: `8545')", default=8545, type=int)
         parser.add_argument("--eth-from", help="Ethereum account from which to send transactions", required=True, type=str)
         parser.add_argument("--tub-address", help="Ethereum address of the Tub contract", required=True, type=str)
-        parser.add_argument("--gas-price", help="Gas price in Wei (default: node default)", default=0, type=int)
+        parser.add_argument("--gas-price", help="Gas price in Wei (default: node default)", type=int)
         parser.add_argument("--debug", help="Enable debug output", dest='debug', action='store_true')
         parser.add_argument("--trace", help="Enable trace output", dest='trace', action='store_true')
         self.arguments = parser.parse_args(args)
@@ -68,7 +68,7 @@ class BiteKeeper:
             self.tub.bite(cup_id).transact(gas_price=self.gas_price())
 
     def gas_price(self):
-        if self.arguments.gas_price > 0:
+        if self.arguments.gas_price:
             return FixedGasPrice(self.arguments.gas_price)
         else:
             return DefaultGasPrice()

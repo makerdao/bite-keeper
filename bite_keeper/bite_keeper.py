@@ -16,18 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import os
+import logging
 import sys
 
-import pkg_resources
 from web3 import Web3, HTTPProvider
 
-from pymaker import Address, Contract
+from pymaker import Address
 from pymaker.gas import FixedGasPrice, DefaultGasPrice
 from pymaker.lifecycle import Web3Lifecycle
-from pymaker.logger import Logger
 from pymaker.sai import Tub
-from pymaker.util import chain
 
 
 class BiteKeeper:
@@ -41,22 +38,18 @@ class BiteKeeper:
         parser.add_argument("--tub-address", help="Ethereum address of the Tub contract", required=True, type=str)
         parser.add_argument("--gas-price", help="Gas price in Wei (default: node default)", type=int)
         parser.add_argument("--debug", help="Enable debug output", dest='debug', action='store_true')
-        parser.add_argument("--trace", help="Enable trace output", dest='trace', action='store_true')
         self.arguments = parser.parse_args(args)
 
         self.web3 = kwargs['web3'] if 'web3' in kwargs else Web3(HTTPProvider(endpoint_uri=f"http://{self.arguments.rpc_host}:{self.arguments.rpc_port}"))
         self.web3.eth.defaultAccount = self.arguments.eth_from
-
-        self.chain = chain(self.web3)
         self.our_address = Address(self.arguments.eth_from)
         self.tub = Tub(web3=self.web3, address=Address(self.arguments.tub_address))
 
-        _json_log = os.path.abspath(pkg_resources.resource_filename(__name__, f"../logs/bite-keeper_{self.chain}_{self.our_address}.json.log".lower()))
-        self.logger = Logger('bite-keeper', self.chain, _json_log, self.arguments.debug, self.arguments.trace)
-        Contract.logger = self.logger
+        logging.basicConfig(format='%(asctime)-15s %(levelname)-8s %(message)s',
+                            level=(logging.DEBUG if self.arguments.debug else logging.INFO))
 
     def main(self):
-        with Web3Lifecycle(self.web3, self.logger) as lifecycle:
+        with Web3Lifecycle(self.web3) as lifecycle:
             lifecycle.on_block(self.check_all_cups)
 
     def check_all_cups(self):

@@ -80,3 +80,55 @@ class TestBiteKeeper:
         # then
         assert deployment.tub.safe(1)
         assert deployment.tub.tab(1) == Wad.from_number(0)
+
+    def test_should_use_default_gas_price_by_default(self, deployment: Deployment):
+        # given
+        keeper = BiteKeeper(args=args(f"--eth-from {deployment.web3.eth.defaultAccount} --tub-address {deployment.tub.address}"),
+                            web3=deployment.web3)
+
+        # and
+        deployment.tub.join(Wad.from_number(10)).transact()
+        deployment.tub.cork(Wad.from_number(100000)).transact()
+        DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(250).value).transact()
+
+        # and
+        deployment.tub.open().transact()
+        deployment.tub.lock(1, Wad.from_number(4)).transact()
+        deployment.tub.draw(1, Wad.from_number(1000)).transact()
+
+        # and
+        DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(150).value).transact()
+
+        # when
+        keeper.check_all_cups()
+
+        # then
+        used_gas_price = deployment.web3.eth.getBlock('latest', full_transactions=True).transactions[0].gasPrice
+        default_gas_price = deployment.web3.eth.gasPrice
+        assert used_gas_price == default_gas_price
+
+    def test_should_use_fixed_gas_price_if_asked_to_go_so(self, deployment: Deployment):
+        # given
+        keeper = BiteKeeper(args=args(f"--eth-from {deployment.web3.eth.defaultAccount} --tub-address {deployment.tub.address} "
+                                      f"--gas-price 129000000000"),
+                            web3=deployment.web3)
+
+        # and
+        deployment.tub.join(Wad.from_number(10)).transact()
+        deployment.tub.cork(Wad.from_number(100000)).transact()
+        DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(250).value).transact()
+
+        # and
+        deployment.tub.open().transact()
+        deployment.tub.lock(1, Wad.from_number(4)).transact()
+        deployment.tub.draw(1, Wad.from_number(1000)).transact()
+
+        # and
+        DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(150).value).transact()
+
+        # when
+        keeper.check_all_cups()
+
+        # then
+        used_gas_price = deployment.web3.eth.getBlock('latest', full_transactions=True).transactions[0].gasPrice
+        assert used_gas_price == 129000000000

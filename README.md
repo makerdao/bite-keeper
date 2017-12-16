@@ -44,7 +44,7 @@ export LDFLAGS="-L$(brew --prefix openssl)/lib" CFLAGS="-I$(brew --prefix openss
 ```
 usage: bite-keeper [-h] [--rpc-host RPC_HOST] [--rpc-port RPC_PORT] --eth-from
                    ETH_FROM --tub-address TUB_ADDRESS [--gas-price GAS_PRICE]
-                   [--debug] [--trace]
+                   [--debug]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -56,7 +56,6 @@ optional arguments:
   --gas-price GAS_PRICE
                         Gas price in Wei (default: node default)
   --debug               Enable debug output
-  --trace               Enable trace output
 ```
 
 ## License

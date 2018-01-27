@@ -50,7 +50,7 @@ class TestBiteKeeper:
 
         # and
         deployment.tub.join(Wad.from_number(10)).transact()
-        deployment.tub.cork(Wad.from_number(100000)).transact()
+        deployment.tub.mold_cap(Wad.from_number(100000)).transact()
         DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(250).value).transact()
 
         # and
@@ -84,7 +84,7 @@ class TestBiteKeeper:
     @staticmethod
     def prepare_unsafe_cup(deployment: Deployment):
         deployment.tub.join(Wad.from_number(10)).transact()
-        deployment.tub.cork(Wad.from_number(100000)).transact()
+        deployment.tub.mold_cap(Wad.from_number(100000)).transact()
         DSValue(web3=deployment.web3, address=deployment.tub.pip()).poke_with_int(Wad.from_number(250).value).transact()
 
         deployment.tub.open().transact()

@@ -21,6 +21,7 @@ This project uses *Python 3.6.2*.
 
 In order to clone the project and install required third-party packages please execute:
 ```
+apt-get build-essential automake pkg-config libtool libffi-dev libgmp-dev python-dev libsecp256k1-dev
 git clone https://github.com/makerdao/bite-keeper.git
 cd bite-keeper
 git submodule update --init --recursive

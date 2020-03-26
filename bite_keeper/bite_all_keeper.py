@@ -22,13 +22,17 @@ import sys
 from web3 import Web3, HTTPProvider
 
 from pymaker import Address
-from pymaker.gas import FixedGasPrice, DefaultGasPrice
+from pymaker.gas import FixedGasPrice, DefaultGasPrice, IncreasingGasPrice
 from pymaker.lifecycle import Lifecycle
 from pymaker.sai import Tub
+from pymaker.keys import register_keys
+from pymaker.numeric import Wad
 
 
 class BiteKeeper:
     """Keeper to bite undercollateralized cups."""
+
+    logger = logging.getLogger('bite-all-keeper')
 
     def __init__(self, args: list, **kwargs):
         parser = argparse.ArgumentParser(prog='bite-keeper')
@@ -36,15 +40,16 @@ class BiteKeeper:
         parser.add_argument("--rpc-port", help="JSON-RPC port (default: `8545')", default=8545, type=int)
         parser.add_argument("--rpc-timeout", help="JSON-RPC timeout (in seconds, default: 10)", default=10, type=int)
         parser.add_argument("--eth-from", help="Ethereum account from which to send transactions", required=True, type=str)
+        parser.add_argument("--eth-key", type=str, nargs='*', help="Ethereum private key(s) to use (e.g. 'key_file=/path/to/keystore.json,pass_file=/path/to/passphrase.txt')")
         parser.add_argument("--tub-address", help="Ethereum address of the Tub contract", required=True, type=str)
-        parser.add_argument("--gas-price", help="Gas price in Wei (default: node default)", type=int)
         parser.add_argument("--debug", help="Enable debug output", dest='debug', action='store_true')
         self.arguments = parser.parse_args(args)
 
-        self.web3 = kwargs['web3'] if 'web3' in kwargs else Web3(HTTPProvider(endpoint_uri=f"http://{self.arguments.rpc_host}:{self.arguments.rpc_port}",
+        self.web3 = kwargs['web3'] if 'web3' in kwargs else Web3(HTTPProvider(endpoint_uri=f"https://{self.arguments.rpc_host}:{self.arguments.rpc_port}",
                                                                               request_kwargs={"timeout": self.arguments.rpc_timeout}))
         self.web3.eth.defaultAccount = self.arguments.eth_from
         self.our_address = Address(self.arguments.eth_from)
+        register_keys(self.web3, self.arguments.eth_key)
         self.tub = Tub(web3=self.web3, address=Address(self.arguments.tub_address))
 
         logging.basicConfig(format='%(asctime)-15s %(levelname)-8s %(message)s',
@@ -55,18 +60,31 @@ class BiteKeeper:
             lifecycle.on_block(self.check_all_cups)
 
     def check_all_cups(self):
-        for cup_id in range(self.tub.cupi()):
-            self.check_cup(cup_id+1)
+        if self.tub._contract.functions.off().call():
+            self.logger.info('Single Collateral Dai has been Caged')
+            self.logger.info('Starting to bite all cups in the tub contract')
+
+            for cup_id in range(self.tub.cupi()):
+                self.check_cup(cup_id+1)
+
+        else:
+            self.logger.info('Single Collateral Dai live')
 
     def check_cup(self, cup_id):
-        if not self.tub.safe(cup_id):
+        ink = self.tub.ink(cup_id)
+        if ink > Wad.from_number(0):
+            self.logger.info(f'Bite cup {cup_id} with ink of {ink}')
             self.tub.bite(cup_id).transact(gas_price=self.gas_price())
+            return
 
     def gas_price(self):
-        if self.arguments.gas_price:
-            return FixedGasPrice(self.arguments.gas_price)
-        else:
-            return DefaultGasPrice()
+        """ IncreasingGasPrice """
+        GWEI = 1000000000
+
+        return IncreasingGasPrice(initial_price=5*GWEI,
+                                  increase_by=10*GWEI,
+                                  every_secs=60,
+                                  max_price=300*GWEI)
 
 
 if __name__ == '__main__':

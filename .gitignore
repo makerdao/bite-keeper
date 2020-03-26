@@ -1,6 +1,10 @@
 .idea
 *.iml
 
+
+_virtualenv
+
+src/__pycache__
 __pycache__
 .cache
 .coverage

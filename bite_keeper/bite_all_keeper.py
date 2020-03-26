@@ -66,16 +66,16 @@ class BiteKeeper:
 
             for cup_id in range(self.tub.cupi()):
                 self.check_cup(cup_id+1)
-
         else:
             self.logger.info('Single Collateral Dai live')
 
     def check_cup(self, cup_id):
-        ink = self.tub.ink(cup_id)
-        if ink > Wad.from_number(0):
-            self.logger.info(f'Bite cup {cup_id} with ink of {ink}')
+        cup = self.tub.cups(cup_id)
+
+        # Bite cups with ink over a threshold that haven't been bitten before
+        if cup.ink > Wad.from_number(0) and cup.art > Wad(0):
+            self.logger.info(f'Bite cup {cup_id} with ink of {cup.ink}')
             self.tub.bite(cup_id).transact(gas_price=self.gas_price())
-            return
 
     def gas_price(self):
         """ IncreasingGasPrice """

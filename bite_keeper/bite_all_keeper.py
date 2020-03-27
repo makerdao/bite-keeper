@@ -73,7 +73,7 @@ class BiteKeeper:
         cup = self.tub.cups(cup_id)
 
         # Bite cups with ink over a threshold that haven't been bitten before
-        if cup.ink > Wad.from_number(0) and cup.art > Wad(0):
+        if cup.ink > Wad.from_number(0) and cup.art != Wad.from_number(0):
             self.logger.info(f'Bite cup {cup_id} with ink of {cup.ink}')
             self.tub.bite(cup_id).transact(gas_price=self.gas_price())
 

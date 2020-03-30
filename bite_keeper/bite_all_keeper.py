@@ -24,9 +24,9 @@ from web3 import Web3, HTTPProvider
 from pymaker import Address
 from pymaker.gas import FixedGasPrice, DefaultGasPrice, IncreasingGasPrice
 from pymaker.lifecycle import Lifecycle
-from pymaker.sai import Tub
+from pymaker.sai import Tub, Vox
 from pymaker.keys import register_keys
-from pymaker.numeric import Wad
+from pymaker.numeric import Wad, Ray
 
 
 class BiteKeeper:
@@ -51,6 +51,7 @@ class BiteKeeper:
         self.our_address = Address(self.arguments.eth_from)
         register_keys(self.web3, self.arguments.eth_key)
         self.tub = Tub(web3=self.web3, address=Address(self.arguments.tub_address))
+        self.vox = Vox(web3=self.web3, address=self.tub.vox())
 
         logging.basicConfig(format='%(asctime)-15s %(levelname)-8s %(message)s',
                             level=(logging.DEBUG if self.arguments.debug else logging.INFO))
@@ -64,17 +65,27 @@ class BiteKeeper:
             self.logger.info('Single Collateral Dai has been Caged')
             self.logger.info('Starting to bite all cups in the tub contract')
 
+            # Read some things that wont change across cups
+            axe = self.tub.axe() # Liquidation penalty [RAY] Fixed at 1 RAY at cage
+            par = self.vox.par() # Dai Targe Price     [RAY] Typically 1 RAY
+            tag = self.tub.tag() # Ref/Oracle price    [RAY] Fixed at shutdown
+
             for cup_id in range(self.tub.cupi()):
-                self.check_cup(cup_id+1)
+                self.check_cup(cup_id+1, axe, par, tag)
         else:
             self.logger.info('Single Collateral Dai live')
 
-    def check_cup(self, cup_id):
+    def check_cup(self, cup_id, axe: Ray, par: Ray, tag: Ray):
         cup = self.tub.cups(cup_id)
+        rue = Ray(self.tub.tab(cup_id)) # Amount of Debt[RAY]
 
-        # Bite cups with ink over a threshold that haven't been bitten before
-        if cup.ink > Wad.from_number(0) and cup.art != Wad.from_number(0):
-            self.logger.info(f'Bite cup {cup_id} with ink of {cup.ink}')
+        # Amount owed in SKR, including liquidation penalty
+        # var owe = rdiv(rmul(rmul(rue, axe), vox.par()), tag());
+        owe = ((rue * axe) * par) / tag
+
+        # Bite cups with owe over a threshold that haven't been bitten before
+        if owe > Ray.from_number(0) and cup.art != Wad.from_number(0):
+            self.logger.info(f'Bite cup {cup_id} with owe of {owe} and ink of {cup.ink}')
             self.tub.bite(cup_id).transact(gas_price=self.gas_price())
 
     def gas_price(self):

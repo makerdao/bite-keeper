@@ -36,7 +36,8 @@ For some known Ubuntu and macOS issues see the [pymaker](https://github.com/make
 ```
 usage: bite-keeper [-h] [--rpc-host RPC_HOST] [--rpc-port RPC_PORT]
                    [--rpc-timeout RPC_TIMEOUT] --eth-from ETH_FROM
-                   --tub-address TUB_ADDRESS [--gas-price GAS_PRICE] [--debug]
+                   --tub-address TUB_ADDRESS [--gas-price GAS_PRICE] [--top]
+                   [--debug]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -49,6 +50,7 @@ optional arguments:
                         Ethereum address of the Tub contract
   --gas-price GAS_PRICE
                         Gas price in Wei (default: node default)
+  --top                 Only bite the top 500 cups
   --debug               Enable debug output
 ```
 

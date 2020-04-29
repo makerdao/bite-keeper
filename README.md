@@ -34,21 +34,30 @@ For some known Ubuntu and macOS issues see the [pymaker](https://github.com/make
 ## Usage
 
 ```
-usage: bite-keeper [-h] [--rpc-host RPC_HOST] [--rpc-port RPC_PORT]
-                   [--rpc-timeout RPC_TIMEOUT] --eth-from ETH_FROM
-                   --tub-address TUB_ADDRESS [--gas-price GAS_PRICE] [--debug]
+usage: bite-keeper [-h] [--rpc-host RPC_HOST] [--rpc-timeout RPC_TIMEOUT]
+                   --eth-from ETH_FROM [--eth-key KEYFILE_STRING]
+                   --tub-address TUB_ADDRESS [--graphql-url GRAPHQL_URL]
+                   [--gas-price GAS_PRICE] [--bitecdps-address BITECDPS_ADDRESS]
+                   [--top] [--chunks] [--debug]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --rpc-host RPC_HOST   JSON-RPC host (default: `localhost')
-  --rpc-port RPC_PORT   JSON-RPC port (default: `8545')
+  --rpc-host RPC_HOST   JSON-RPC host (default: `http://localhost:8545')
   --rpc-timeout RPC_TIMEOUT
                         JSON-RPC timeout (in seconds, default: 10)
   --eth-from ETH_FROM   Ethereum account from which to send transactions
+  --eth-key KEYFILE_STRING
+                        path to keyfile (key_file=./k.json,pass_file=./p.txt")
   --tub-address TUB_ADDRESS
                         Ethereum address of the Tub contract
+  --graphql-url GRAPHQL_URL
+                        GraphQL URL (default: https://sai-mainnet.makerfoundation.com/v1)
+  --bitecdps-address BITECDPS_ADDRESS
+                        Ethereum address of the BiteCdps contract
   --gas-price GAS_PRICE
                         Gas price in Wei (default: node default)
+  --top                 Only bite the top N cups (default: 500)
+  --chunks              Only bite N cups at a time (default: 100)
   --debug               Enable debug output
 ```
 

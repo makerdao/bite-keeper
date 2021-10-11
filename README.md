@@ -1,6 +1,6 @@
 # bite-keeper
 
-[![Build Status](https://travis-ci.org/makerdao/bite-keeper.svg?branch=master)](https://travis-ci.org/makerdao/bite-keeper)
+![Build Status](https://github.com/makerdao/bite-keeper/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/makerdao/bite-keeper/branch/master/graph/badge.svg)](https://codecov.io/gh/makerdao/bite-keeper)
 
 The _DAI Stablecoin System_ incentivizes external agents, called _keepers_,
